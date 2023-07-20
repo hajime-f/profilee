@@ -1,0 +1,63 @@
+version: '3.7'
+
+services:
+  python:
+    build:
+      context: ./python
+      dockerfile: Dockerfile
+    command: uwsgi --socket :8001 --module profilee.wsgi --py-autoreload 1 --logto /tmp/uwsgi.log --wsgi-file /code/config/wsgi.py
+    restart: unless-stopped
+    container_name: Django
+    networks:
+      - django_net
+    volumes:
+      - ./src:/code
+      - ./static:/static
+      - ./logs/uwsgi:/tmp
+    expose:
+      - "8001"
+    depends_on:
+      - db
+
+  db:
+    build:
+      context: ./mysql
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    container_name: MySQL
+    networks:
+      - django_net
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "Ktsmk35F"
+      TZ: "Asia/Tokyo"
+    volumes:
+      - profilee.db.volume:/var/lib/mysql
+      - ./mysql/init.d:/docker-entrypont-initdb.d
+      - ./logs/mysql:/var/log
+
+  nginx:
+    image: nginx:1.24
+    restart: unless-stopped
+    container_name: nginx
+    networks:
+      - django_net
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./nginx/conf:/etc/nginx/conf.d
+      - ./nginx/uwsgi_params:/etc/nginx/uwsgi_params
+      - ./nginx/uwsgi.ini:/etc/nginx/uwsgi.ini
+      - ./static:/static
+      - ./logs/nginx:/var/log/nginx
+    depends_on:
+      - python
+
+networks:
+  django_net:
+    driver: bridge
+
+volumes:
+  profilee.db.volume:
+    name: profilee.db.volume      
