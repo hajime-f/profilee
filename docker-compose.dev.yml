@@ -30,7 +30,7 @@ services:
     ports:
       - "3306:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: "Ktsmk35F"
+      MYSQL_ROOT_PASSWORD: ${PROFILEE_DB_PASSWORD:-default}
       TZ: "Asia/Tokyo"
     volumes:
       - profilee.db.volume:/var/lib/mysql
