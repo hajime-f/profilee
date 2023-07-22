@@ -89,7 +89,16 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'accounts',
 ]
+
+AUTH_USER_MODEL = "accounts.User"
+
+ACCOUNT_FORMS = {
+    "signup": "accounts.forms.CustomUserCreationForm",
+}
+
+ACCOUNT_ADAPTER = 'accounts.adapter.AccountAdapter'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
