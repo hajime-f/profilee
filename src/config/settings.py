@@ -91,9 +91,10 @@ INSTALLED_APPS = [
     # 'allauth.account',
     # 'allauth.socialaccount',
     # 'accounts',
+    'users',
 ]
 
-# AUTH_USER_MODEL = "accounts.User"
+AUTH_USER_MODEL = "users.User"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
